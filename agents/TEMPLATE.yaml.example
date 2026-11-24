@@ -1,0 +1,28 @@
+# Copy to agents/<your-agent-id>.yaml, edit, then POST /api/admin/reload (or restart).
+name: My Agent                     # display name
+business: My Company               # business it represents
+domain: real estate                # any domain: legal, clinic, SaaS, logistics, banking...
+description: One line on what it does (shown to users and to other AI agents via MCP).
+greeting: Hi! How can I help?
+theme_color: "#2563eb"
+knowledge: my-agent                # folder knowledge/my-agent/ with .md/.txt docs (optional)
+# provider: anthropic              # anthropic | openai | mock  (default: auto from env keys)
+# model: claude-sonnet-5-5
+temperature: 0.3
+max_tokens: 1024
+answer_mode: open                  # open = answers any question; business = only business topics
+builtin_tools: [knowledge_search, web_lookup, calculator, current_time, save_lead, request_booking]
+system_prompt: |
+  You are ... Describe tone, rules, what to escalate, what never to do.
+suggested_questions:
+  - Example question 1
+http_tools:                        # connect ANY business API / webhook / Zapier / n8n
+  - name: check_availability
+    description: Check property availability for a date.
+    method: GET                    # GET -> args as query params; POST/PUT -> JSON body
+    url: "${MY_API_URL}/availability/{property_id}"   # {arg} = path param, ${ENV} = secret
+    headers: {Authorization: "Bearer ${MY_API_TOKEN}"}
+    parameters:
+      property_id: {type: string}
+      date: {type: string, description: YYYY-MM-DD}
+    required: [property_id, date]

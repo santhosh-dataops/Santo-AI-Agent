@@ -1,0 +1,18 @@
+# One-click deploy on Render: New > Blueprint > point at this repo
+services:
+  - type: web
+    name: santo
+    runtime: docker
+    plan: starter            # a persistent disk needs a paid plan; use "free" for a quick demo
+    healthCheckPath: /health
+    disk:
+      name: santo-data
+      mountPath: /app/data
+      sizeGB: 1
+    envVars:
+      - key: LLM_PROVIDER          # Render has no GPU and little RAM; built-in engine, no key.
+        value: local                # For full AI, point OLLAMA_URL at your own Ollama server instead.
+      - key: API_KEYS
+        generateValue: true
+      - key: PUBLIC_AGENTS
+        value: "*"

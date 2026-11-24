@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard · Santo</title>
+<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/static/css/site.css">
+<style>
+  .totals { display: grid; grid-template-columns: repeat(4, 1fr); border: 1.5px solid var(--ink); border-radius: var(--r-lg); background: #fff; margin-bottom: 24px; overflow: hidden; }
+  .totals div { padding: 20px 22px; }
+  .totals div + div { border-left: 1px solid var(--line); }
+  .totals b { display: block; font: 780 var(--t-2xl)/1 var(--display); font-stretch: 125%; margin-bottom: 6px; }
+  .totals span { font-size: var(--t-sm); color: var(--muted); }
+  .grid2 { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 24px; margin-bottom: 24px; }
+  .panel h2 { font-size: var(--t-lg); font-stretch: 115%; margin-bottom: 16px; }
+  .chart { display: flex; align-items: flex-end; gap: 6px; height: 180px; border-bottom: 1.5px solid var(--ink); padding-top: 10px; }
+  .chart .bar { flex: 1; background: var(--vat); border-radius: 3px 3px 0 0; min-height: 2px; position: relative; }
+  .chart .bar:hover { background: var(--madder); }
+  .chart-x { display: flex; gap: 6px; font-size: 11px; color: var(--muted); margin-top: 6px; }
+  .chart-x span { flex: 1; text-align: center; }
+  table { width: 100%; border-collapse: collapse; font-size: var(--t-sm); }
+  th { text-align: left; font-weight: 650; color: var(--muted); padding: 8px 10px 8px 0; border-bottom: 1.5px solid var(--ink); }
+  td { padding: 10px 10px 10px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  td.clip { max-width: 360px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tbl { overflow-x: auto; }
+  .empty { color: var(--muted); font-size: var(--t-sm); padding: 18px 0; }
+  .link-btn { border: 0; background: none; color: var(--madder); font: 600 var(--t-xs) var(--display); cursor: pointer; padding: 0; }
+  .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; vertical-align: -1px; }
+  @media (max-width: 900px) { .totals { grid-template-columns: 1fr 1fr; } .totals div:nth-child(3) { border-left: 0; } .totals div:nth-child(n+3) { border-top: 1px solid var(--line); } .grid2 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<nav class="nav" aria-label="Main"><div class="wrap">
+  <a class="brand" href="/"><img src="/static/img/logo.svg" alt="Santo" width="115" height="30"></a>
+  <ul><li><a href="/console">Console</a></li><li><a href="/builder">Builder</a></li><li><a href="/docs">API docs</a></li></ul>
+  <div class="actions"><a class="btn btn-primary" href="/builder">Build an agent</a></div>
+</div></nav>
+
+<main class="wrap" style="padding-bottom:80px">
+  <header class="app-head"><h1 class="display">Dashboard</h1><p class="muted" id="engine" style="margin-top:8px"></p></header>
+  <form class="keybar panel" id="kf">
+    <div class="field"><label for="key">Admin key</label><input id="key" type="password" autocomplete="off" placeholder="One of the API_KEYS set on your server"></div>
+    <button class="btn btn-primary" type="submit">Show dashboard</button>
+    <p id="status" role="status" style="margin:0;flex-basis:100%"></p>
+  </form>
+
+  <div id="dash" hidden>
+    <div class="totals">
+      <div><b id="t-msg">0</b><span>Messages answered</span></div>
+      <div><b id="t-conv">0</b><span>Conversations</span></div>
+      <div><b id="t-leads">0</b><span>Leads and sign-ups</span></div>
+      <div><b id="t-book">0</b><span>Booking requests</span></div>
+    </div>
+    <div class="grid2">
+      <section class="panel"><h2>Messages, last 14 days</h2><div class="chart" id="chart"></div><div class="chart-x" id="chart-x"></div></section>
+      <section class="panel"><h2>Agents</h2><div class="tbl"><table><thead><tr><th>Agent</th><th>Messages</th><th></th></tr></thead><tbody id="agents"></tbody></table></div></section>
+    </div>
+    <section class="panel" style="margin-bottom:24px"><h2>Booking requests</h2><div class="tbl"><table><thead><tr><th>When (UTC)</th><th>Assistant</th><th>Name</th><th>Contact</th><th>Date and time</th><th>Party</th><th>Details</th><th>Status</th></tr></thead><tbody id="bookings"></tbody></table></div></section>
+    <section class="panel" style="margin-bottom:24px"><h2>Recent conversations</h2><div class="tbl"><table><thead><tr><th>When (UTC)</th><th>Agent</th><th>Question</th><th>Answer</th></tr></thead><tbody id="convs"></tbody></table></div></section>
+    <section class="panel"><h2>Leads and sign-ups</h2><div class="tbl"><table><thead><tr><th>When (UTC)</th><th>Contact</th><th>Name</th><th>Business</th><th>From</th><th>Needs</th></tr></thead><tbody id="leads"></tbody></table></div></section>
+  </div>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+try { $('key').value = sessionStorage.getItem('santo_key') || ''; } catch (e) {}
+const api = (p, opt = {}) => fetch(p, { ...opt, headers: { 'x-api-key': $('key').value, ...(opt.headers || {}) } }).then(async r => { const j = await r.json(); if (!r.ok) throw new Error(j.detail || r.statusText); return j; });
+const cell = (tr, text, cls) => { const td = document.createElement('td'); td.textContent = text ?? ''; if (cls) { td.className = cls; td.title = text ?? ''; } tr.appendChild(td); return td; };
+const empty = (tb, cols, msg) => { tb.innerHTML = `<tr><td colspan="${cols}" class="empty"></td></tr>`; tb.querySelector('td').textContent = msg; };
+
+async function load() {
+  const st = $('status'); st.className = ''; st.textContent = 'Loading…';
+  try {
+    const [stats, agents, convs, leads, bookings, health] = await Promise.all([api('/api/admin/stats'), fetch('/api/agents').then(r => r.json()), api('/api/admin/conversations?limit=30'), api('/api/admin/leads'), api('/api/admin/bookings'), fetch('/health').then(r => r.json())]);
+    try { sessionStorage.setItem('santo_key', $('key').value); } catch (e) {}
+    st.textContent = ''; $('dash').hidden = false;
+    $('t-msg').textContent = stats.totals.messages.toLocaleString(); $('t-conv').textContent = stats.totals.conversations.toLocaleString();
+    $('t-leads').textContent = stats.totals.leads.toLocaleString(); $('t-book').textContent = (stats.totals.bookings || 0).toLocaleString();
+    $('engine').textContent = health.ai_engine === 'local' ? 'AI engine: built-in (no model server found)' : `AI engine: ${health.ai_engine}, model ${health.model}. No API key needed.`;
+
+    const bb = $('bookings'); bb.innerHTML = '';
+    if (!bookings.length) empty(bb, 8, 'No booking requests yet. They appear here when a customer books through an assistant.');
+    bookings.forEach(k => {
+      const tr = document.createElement('tr'); cell(tr, k.created_at.slice(5, 16)); cell(tr, k.agent_id); cell(tr, k.name); cell(tr, k.contact);
+      cell(tr, [k.date, k.time].filter(Boolean).join(' ')); cell(tr, k.party_size ?? ''); cell(tr, k.details, 'clip');
+      const sel = document.createElement('select'); sel.style.cssText = 'padding:4px 8px;width:auto';
+      ['pending', 'confirmed', 'declined', 'done'].forEach(v => { const o = document.createElement('option'); o.value = o.textContent = v; o.selected = v === k.status; sel.appendChild(o); });
+      sel.onchange = async () => { try { await api('/api/admin/bookings/' + k.id, { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ status: sel.value }) }); } catch (e) { alert('Not saved: ' + e.message); } };
+      cell(tr, '').appendChild(sel); bb.appendChild(tr);
+    });
+
+    const days = [...Array(14)].map((_, i) => { const d = new Date(); d.setUTCDate(d.getUTCDate() - 13 + i); return d.toISOString().slice(0, 10); });
+    const byDay = Object.fromEntries(stats.daily.map(d => [d.day, d.messages])), max = Math.max(1, ...days.map(d => byDay[d] || 0));
+    $('chart').innerHTML = ''; $('chart-x').innerHTML = '';
+    days.forEach((d, i) => {
+      const b = document.createElement('div'); b.className = 'bar'; b.style.height = ((byDay[d] || 0) / max * 100) + '%'; b.title = `${d}: ${byDay[d] || 0} messages`; $('chart').appendChild(b);
+      const x = document.createElement('span'); x.textContent = i % 2 ? '' : d.slice(5).replace('-', '/'); $('chart-x').appendChild(x);
+    });
+
+    const counts = Object.fromEntries(stats.per_agent.map(a => [a.agent_id, a.messages]));
+    const tb = $('agents'); tb.innerHTML = '';
+    agents.forEach(a => {
+      const tr = document.createElement('tr'); const n = cell(tr, '');
+      n.innerHTML = '<i class="dot"></i><a></a>'; n.querySelector('.dot').style.background = a.theme_color;
+      const link = n.querySelector('a'); link.href = '/console?agent=' + encodeURIComponent(a.id); link.textContent = a.name;
+      cell(tr, (counts[a.id] || 0).toLocaleString());
+      const del = document.createElement('button'); del.className = 'link-btn'; del.textContent = 'Delete';
+      del.onclick = async () => { if (!confirm(`Delete the agent "${a.name}"? Its website widget will stop working.`)) return; try { await api('/api/admin/agents/' + a.id, { method: 'DELETE' }); load(); } catch (e) { alert('Not deleted: ' + e.message); } };
+      cell(tr, '').appendChild(del); tb.appendChild(tr);
+    });
+
+    const cb = $('convs'); cb.innerHTML = '';
+    if (!convs.length) empty(cb, 4, 'No conversations yet. Try an agent in the console or on your site.');
+    convs.forEach(c => { const tr = document.createElement('tr'); cell(tr, c.created_at.slice(5, 16)); cell(tr, c.agent_id); cell(tr, c.user_message, 'clip'); cell(tr, c.reply, 'clip'); cb.appendChild(tr); });
+
+    const lb = $('leads'); lb.innerHTML = '';
+    if (!leads.length) empty(lb, 6, 'No sign-ups yet. They appear here when someone sends the form on your homepage.');
+    leads.forEach(l => { const tr = document.createElement('tr'); cell(tr, l.created_at.slice(0, 16)); const e = cell(tr, ''); if (l.email.includes('@')) { const a = document.createElement('a'); a.href = 'mailto:' + l.email; a.textContent = l.email; e.appendChild(a); } else e.textContent = l.email;
+      cell(tr, l.name); cell(tr, l.company); cell(tr, (l.source || '').replace('agent:', 'Chat: ') || 'Website form'); cell(tr, l.message, 'clip'); lb.appendChild(tr); });
+  } catch (e) { $('dash').hidden = true; st.className = 'error-text'; st.textContent = e.message === 'Missing or invalid API key' ? 'That admin key is not valid. Use one of the API_KEYS set on your server.' : 'Could not load the dashboard: ' + e.message; }
+}
+$('kf').onsubmit = e => { e.preventDefault(); load(); };
+if ($('key').value) load();
+</script>
+</body>
+</html>

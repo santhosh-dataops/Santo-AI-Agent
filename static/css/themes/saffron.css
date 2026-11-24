@@ -1,0 +1,10 @@
+/* Theme: Saffron Sunrise — warm, welcoming, Indian-inspired */
+:root {
+  --display: "Plus Jakarta Sans", system-ui, sans-serif;
+  --head-stretch: 100%; --head-weight: 800; --head-spacing: -.025em;
+  --undyed: #FFF9F1; --cotton: #FFFFFF; --ink: #2A1A10; --muted: #6B5444; --line: #F1E2CF;
+  --vat: #0F766E; --vat-soft: #2DD4BF; --saffron: #F59E0B; --woad: #0F766E; --madder: #E8590C;
+  --primary: #E8590C; --primary-hover: #C2410C;
+  --dark: #0B3B3C; --dark-2: #072D2E; --dark-line: #14595A; --on-dark-muted: #CFE8E5; --on-dark-code: #E7F5F3;
+  --t1: #F59E0B; --t2: #FB7185; --t3: #2DD4BF; --t4: #FDE68A; --warp: #E8590C;
+}

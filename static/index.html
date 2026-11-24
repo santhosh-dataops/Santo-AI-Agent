@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Santo: the AI assistant that answers your customers 24/7</title>
+<meta name="description" content="Santo learns your business in minutes, then answers customer questions, takes bookings and captures leads on your website, day and night. No coding needed.">
+<meta property="og:title" content="Meet Santo: the AI assistant for your business">
+<meta property="og:description" content="Answers questions, takes bookings and captures leads on your website, 24/7. Set up in minutes, no coding.">
+<meta property="og:image" content="https://heysanto.ai/static/img/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<link rel="canonical" href="https://heysanto.ai/">
+<meta property="og:url" content="https://heysanto.ai/">
+<meta property="og:site_name" content="Santo">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "Santo", "url": "https://heysanto.ai", "logo": "https://heysanto.ai/static/img/mark.svg", "email": "hello@heysanto.ai"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Santo", "applicationCategory": "BusinessApplication", "operatingSystem": "Web", "description": "AI assistant that answers customer questions, takes bookings and captures leads on your website 24/7. No coding needed."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Do I need any technical skills?", "acceptedAnswer": {"@type": "Answer", "text": "No. You fill in a simple form, paste your information and copy one line onto your website. If you use Shopify, WordPress or Wix, it takes a couple of minutes."}}, {"@type": "Question", "name": "Can Santo answer any question?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Santo answers questions about your business from your own information, and general questions too: facts, explanations, math, dates and everyday advice. It never makes up your prices or policies. If something about your business isn't covered, it offers to pass the customer's details to your team."}}, {"@type": "Question", "name": "Can it book appointments or tables?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Santo collects the customer's details and sends them to your booking tool, calendar or email, so nothing gets missed."}}, {"@type": "Question", "name": "Can I change what it says later?", "acceptedAnswer": {"@type": "Answer", "text": "Any time. Update your information or instructions and Santo uses the new version straight away."}}, {"@type": "Question", "name": "Do I need an OpenAI or other AI account?", "acceptedAnswer": {"@type": "Answer", "text": "No. Santo comes with its own open-source AI model that runs on your server, so there are no API keys and no per-message charges."}}, {"@type": "Question", "name": "Is my information safe?", "acceptedAnswer": {"@type": "Answer", "text": "Your data is kept separate from other businesses and you can delete conversations at any time. Because the AI runs on your own server, customer conversations are never sent to an outside AI company."}}]}</script>
+
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#4F46E5">
+<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/static/fonts/jakarta-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/static/css/site.css">
+<style>
+  :root { --grad: linear-gradient(135deg, #4F46E5 0%, #7C3AED 55%, #06B6D4 100%); --shadow: 0 24px 60px -24px rgba(30, 27, 75, .35); --r-card: 18px; }
+  body { background: #fff; }
+  .section { padding-block: clamp(64px, 8vw, 112px); }
+  .center { text-align: center; }
+  .center .lede, .center h2 { margin-inline: auto; }
+  .sec-head { margin-bottom: 48px; }
+  .sec-head h2 { font-size: clamp(2rem, 3.6vw, 2.75rem); max-width: 20ch; margin-bottom: 14px; }
+  .sec-head .lede { max-width: 56ch; }
+  .tag { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 99px; background: #EEF2FF; color: #4338CA; font-size: var(--t-sm); font-weight: 650; margin-bottom: 18px; }
+  .tag i { width: 8px; height: 8px; border-radius: 50%; background: #22C55E; box-shadow: 0 0 0 4px #DCFCE7; }
+  .ico { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+  .ico-box { width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; color: #fff; background: var(--grad); box-shadow: 0 10px 24px -10px rgba(79, 70, 229, .7); }
+
+  /* ---------- hero ---------- */
+  .hero { position: relative; overflow: hidden; padding: clamp(48px, 6vw, 88px) 0 clamp(64px, 7vw, 100px);
+    background: radial-gradient(40rem 28rem at 85% 20%, rgba(124, 58, 237, .16), transparent 60%),
+                radial-gradient(36rem 26rem at 60% 90%, rgba(6, 182, 212, .14), transparent 60%),
+                radial-gradient(30rem 24rem at 5% 10%, rgba(79, 70, 229, .10), transparent 60%), #F8F9FF; }
+  .hero .wrap { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: 48px; align-items: center; }
+  .hero h1 { font-size: clamp(2.6rem, 5vw, 4.1rem); line-height: 1.04; margin-bottom: 22px; }
+  .hero h1 span { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero .lede { font-size: 1.25rem; margin-bottom: 30px; max-width: 44ch; }
+  .ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 30px; }
+  .ctas .btn { min-height: 52px; padding: 0 24px; font-size: 1rem; }
+  .checks { display: flex; flex-wrap: wrap; gap: 10px 22px; list-style: none; padding: 0; margin: 0; color: var(--muted); font-size: var(--t-sm); font-weight: 550; }
+  .checks li { display: flex; align-items: center; gap: 8px; }
+  .checks .ico { width: 18px; height: 18px; color: #16A34A; stroke-width: 2.6; }
+
+  .stage { position: relative; display: grid; place-items: center; min-height: 600px; }
+  .phone { position: relative; width: 330px; height: 640px; border-radius: 46px; background: #0F172A; padding: 12px;
+    box-shadow: 0 40px 80px -30px rgba(30, 27, 75, .55), inset 0 0 0 2px #334155; z-index: 2; }
+  .phone::before { content: ""; position: absolute; top: 22px; left: 50%; transform: translateX(-50%); width: 96px; height: 26px; border-radius: 20px; background: #0F172A; z-index: 3; }
+  .screen { width: 100%; height: 100%; border-radius: 36px; overflow: hidden; background: #fff; display: flex; flex-direction: column; }
+  .app-bar { background: var(--grad); color: #fff; padding: 52px 18px 14px; display: flex; align-items: center; gap: 12px; }
+  .avatar { width: 40px; height: 40px; border-radius: 50%; background: #fff; display: grid; place-items: center; flex: none; }
+  .avatar img { width: 26px; height: 26px; }
+  .app-bar b { display: block; font-size: 1rem; }
+  .app-bar small { opacity: .9; font-size: var(--t-xs); display: flex; align-items: center; gap: 6px; }
+  .app-bar small::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #4ADE80; }
+  .agent-pick { display: flex; gap: 6px; padding: 10px 12px 4px; overflow-x: auto; }
+  .agent-pick button { border: 0; border-radius: 99px; padding: 6px 12px; font: 600 12px var(--display); background: #F1F5F9; color: #334155; cursor: pointer; white-space: nowrap; }
+  .agent-pick button[aria-selected="true"] { background: #EEF2FF; color: #4338CA; box-shadow: inset 0 0 0 1.5px #A5B4FC; }
+  .log { flex: 1; overflow-y: auto; padding: 10px 14px; display: flex; flex-direction: column; gap: 8px; background: #F8FAFC; }
+  .bubble { max-width: 86%; padding: 9px 13px; border-radius: 16px; font-size: 13.5px; line-height: 1.45; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .bubble.bot { background: #fff; align-self: flex-start; border-bottom-left-radius: 5px; box-shadow: 0 1px 2px rgba(15, 23, 42, .08); }
+  .bubble.me { background: #4F46E5; color: #fff; align-self: flex-end; border-bottom-right-radius: 5px; }
+  .typing { display: inline-flex; gap: 4px; } .typing i { width: 6px; height: 6px; border-radius: 50%; background: #94A3B8; animation: blink 1s infinite; }
+  .typing i:nth-child(2) { animation-delay: .15s; } .typing i:nth-child(3) { animation-delay: .3s; }
+  @keyframes blink { 50% { opacity: .3; } }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; padding: 8px 12px 0; background: #F8FAFC; }
+  .chips button { border: 1px solid #C7D2FE; background: #fff; color: #4338CA; border-radius: 99px; padding: 6px 11px; font: 600 12px var(--display); cursor: pointer; }
+  .composer { display: flex; gap: 8px; padding: 10px 12px 16px; background: #F8FAFC; }
+  .composer input { border-radius: 99px; padding: 10px 14px; font-size: 14px; border-color: #E2E8F0; min-width: 0; }
+  .composer button { width: 42px; height: 42px; border-radius: 50%; border: 0; background: #4F46E5; color: #fff; display: grid; place-items: center; cursor: pointer; flex: none; }
+  .composer .ico { width: 18px; height: 18px; }
+
+  .float { position: absolute; z-index: 3; background: #fff; border-radius: 16px; padding: 12px 14px; display: flex; gap: 12px; align-items: center;
+    box-shadow: var(--shadow); font-size: var(--t-sm); min-width: 220px; animation: bob 6s ease-in-out infinite; }
+  .float b { display: block; font-size: var(--t-sm); } .float span { color: var(--muted); font-size: var(--t-xs); }
+  .float .ib { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; flex: none; }
+  .float .ib .ico { width: 20px; height: 20px; }
+  .f1 { top: 300px; left: -24px; } .f1 .ib { background: #DCFCE7; color: #16A34A; }
+  .f2 { top: 400px; right: -36px; animation-delay: -2s; } .f2 .ib { background: #EEF2FF; color: #4F46E5; }
+  .f3 { top: 40px; left: -8px; animation-delay: -4s; } .f3 .ib { background: #FEF3C7; color: #D97706; }
+  @keyframes bob { 50% { transform: translateY(-8px); } }
+  .stage.chatting .float { opacity: 0; transform: scale(.96); pointer-events: none; transition: opacity .3s, transform .3s; animation: none; }
+
+  @media (max-width: 1020px) {
+    .hero .wrap { grid-template-columns: minmax(0, 1fr); }
+    .stage { min-height: 0; padding-top: 12px; }
+    .float { display: none; }
+  }
+  @media (max-width: 400px) { .phone { width: 100%; max-width: 330px; height: 600px; } }
+
+  /* ---------- logos / proof strip ---------- */
+  .strip { border-block: 1px solid var(--line); background: #fff; padding: 22px 0; }
+  .strip .wrap { display: flex; align-items: center; justify-content: center; gap: 14px 40px; flex-wrap: wrap; color: #64748B; font-weight: 650; font-size: var(--t-sm); }
+  .strip .wrap span:first-child { color: var(--ink); font-weight: 700; }
+
+  /* ---------- features ---------- */
+  .feat-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+  .feat { padding: 28px; border-radius: var(--r-card); background: #fff; border: 1px solid var(--line); transition: transform .2s, box-shadow .2s; }
+  .feat:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+  .feat h3 { margin: 18px 0 8px; font-size: 1.15rem; font-stretch: 100%; }
+  .feat p { color: var(--muted); margin: 0; font-size: var(--t-md); }
+  @media (max-width: 900px) { .feat-grid { grid-template-columns: minmax(0, 1fr); } }
+  @media (min-width: 601px) and (max-width: 900px) { .feat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+  /* ---------- how it works with screenshots ---------- */
+  .how { background: #F8F9FF; }
+  .step { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 56px; align-items: center; }
+  .step + .step { margin-top: 80px; }
+  .step:nth-child(even) .step-text { order: 2; }
+  .step-num { display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: #EEF2FF; color: #4338CA; font-weight: 800; margin-bottom: 16px; }
+  .step h3 { font-size: clamp(1.5rem, 2.4vw, 2rem); font-stretch: 100%; font-weight: 800; letter-spacing: -.02em; margin-bottom: 12px; line-height: 1.15; }
+  .step p { color: var(--muted); font-size: 1.1rem; }
+  .step ul { list-style: none; padding: 0; margin: 18px 0 0; display: grid; gap: 10px; }
+  .step li { display: flex; gap: 10px; align-items: flex-start; }
+  .step li .ico { width: 20px; height: 20px; color: #4F46E5; stroke-width: 2.4; margin-top: 2px; }
+  .browser { border-radius: 14px; background: #fff; box-shadow: var(--shadow); border: 1px solid var(--line); overflow: hidden; }
+  .browser .bar { display: flex; align-items: center; gap: 7px; padding: 11px 14px; background: #F1F5F9; border-bottom: 1px solid var(--line); }
+  .browser .bar i { width: 11px; height: 11px; border-radius: 50%; background: #CBD5E1; }
+  .browser .bar i:nth-child(1) { background: #F87171; } .browser .bar i:nth-child(2) { background: #FBBF24; } .browser .bar i:nth-child(3) { background: #4ADE80; }
+  .browser .bar span { margin-left: 10px; flex: 1; background: #fff; border-radius: 6px; padding: 4px 10px; font-size: 12px; color: #64748B; }
+  .browser img { width: 100%; height: auto; }
+  @media (max-width: 900px) { .step { grid-template-columns: minmax(0, 1fr); gap: 28px; } .step:nth-child(even) .step-text { order: 0; } .step + .step { margin-top: 56px; } }
+
+  /* ---------- industries ---------- */
+  .ind-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+  .ind { display: flex; flex-direction: column; padding: 24px; border-radius: var(--r-card); border: 1px solid var(--line); background: #fff; text-decoration: none; color: inherit; transition: border-color .2s, box-shadow .2s, transform .2s; }
+  .ind:hover { border-color: #A5B4FC; box-shadow: var(--shadow); transform: translateY(-3px); }
+  .ind .ib { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; margin-bottom: 16px; }
+  .ind h3 { font-size: 1.05rem; font-stretch: 100%; margin-bottom: 8px; }
+  .ind p { color: var(--muted); font-size: var(--t-sm); margin: 0 0 16px; flex: 1; }
+  .ind .go { color: #4F46E5; font-weight: 650; font-size: var(--t-sm); }
+  @media (max-width: 1020px) { .ind-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .ind-grid { grid-template-columns: minmax(0, 1fr); } }
+
+  /* ---------- results band ---------- */
+  .band { background: linear-gradient(135deg, #1E1B4B 0%, #312E81 50%, #4C1D95 100%); color: #fff; position: relative; overflow: hidden; }
+  .band::after { content: ""; position: absolute; width: 520px; height: 520px; right: -160px; top: -200px; border-radius: 50%; background: radial-gradient(circle, rgba(34, 211, 238, .35), transparent 65%); }
+  .band .wrap { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
+  .band .stat b { display: block; font-size: clamp(2rem, 3.6vw, 2.8rem); font-weight: 800; letter-spacing: -.03em; line-height: 1.1; margin-bottom: 6px; }
+  .band .stat span { color: #C7D2FE; }
+  @media (max-width: 860px) { .band .wrap { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+  /* ---------- channels ---------- */
+  .ch-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+  .ch { padding: 30px; border-radius: var(--r-card); background: #F8F9FF; border: 1px solid #E0E7FF; }
+  .ch h3 { margin: 18px 0 8px; font-size: 1.15rem; font-stretch: 100%; }
+  .ch p { color: var(--muted); margin: 0; }
+  .dev-note { margin-top: 26px; text-align: center; color: var(--muted); font-size: var(--t-sm); }
+  @media (max-width: 900px) { .ch-grid { grid-template-columns: minmax(0, 1fr); } }
+
+  /* ---------- faq ---------- */
+  .faq-list { max-width: 780px; margin: 0 auto; }
+  .faq-list details { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 18px 22px; }
+  .faq-list details + details { margin-top: 12px; }
+  .faq-list summary { cursor: pointer; font-weight: 700; list-style: none; display: flex; justify-content: space-between; gap: 16px; align-items: center; }
+  .faq-list summary::-webkit-details-marker { display: none; }
+  .faq-list summary::after { content: "+"; font-size: 1.5em; line-height: 1; color: #4F46E5; transition: transform .2s; }
+  .faq-list details[open] summary::after { transform: rotate(45deg); }
+  .faq-list details p { margin: 12px 0 0; color: var(--muted); }
+
+  /* ---------- final cta ---------- */
+  .final { padding: clamp(56px, 7vw, 96px) 0; }
+  .final-card { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; padding: clamp(28px, 5vw, 56px); border-radius: 28px; background: var(--grad); color: #fff; position: relative; overflow: hidden; }
+  .final-card h2 { font-size: clamp(2rem, 3.6vw, 2.75rem); margin-bottom: 14px; color: #fff; }
+  .final-card .lede { color: #E0E7FF; }
+  .final-card ul { list-style: none; padding: 0; margin: 24px 0 0; display: grid; gap: 10px; }
+  .final-card li { display: flex; gap: 10px; align-items: center; font-weight: 550; }
+  .final-card li .ico { color: #A7F3D0; stroke-width: 2.6; width: 20px; height: 20px; }
+  .final-card form { background: #fff; color: var(--ink); border-radius: 20px; padding: 26px; display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; box-shadow: 0 30px 60px -30px rgba(15, 23, 42, .6); }
+  .final-card form .full { grid-column: 1 / -1; }
+  .final-card form .btn { width: 100%; min-height: 50px; }
+  @media (max-width: 900px) { .final-card { grid-template-columns: minmax(0, 1fr); } .final-card form { grid-template-columns: minmax(0, 1fr); } }
+
+  .footer { background: #0F172A; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a8.5 8.5 0 0 1-12.3 7.6L3 21l1.4-5.4A8.5 8.5 0 1 1 21 12z"/><path d="M8.5 11h.01M12 11h.01M15.5 11h.01"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v15H6.5A2.5 2.5 0 0 0 4 20.5 2.5 2.5 0 0 0 6.5 23H20"/><path d="M8 7h8M8 11h6"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4M8 14h3"/></symbol>
+  <symbol id="i-lead" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M18 8v6M15 11h6"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></symbol>
+  <symbol id="i-plug" viewBox="0 0 24 24"><path d="M9 2v5M15 2v5M6 7h12v4a6 6 0 0 1-12 0V7zM12 17v5"/></symbol>
+  <symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.8 2-2 0-.6-.3-1-.6-1.4-.3-.4-.5-.8-.5-1.3 0-1 .8-1.8 1.8-1.8H17a4 4 0 0 0 4-4C21 6.5 17 3 12 3z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7.5" r="1"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.4 8.2-8 9-4.6-.8-8-4-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-bag" viewBox="0 0 24 24"><path d="M5 8h14l-1.2 12.1a1 1 0 0 1-1 .9H7.2a1 1 0 0 1-1-.9L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></symbol>
+  <symbol id="i-food" viewBox="0 0 24 24"><path d="M6 3v8a2 2 0 0 0 2 2v8M4 3v5a2 2 0 0 0 4 0V3M17 21V3c-2.2 1.5-3 4-3 7v3h3"/></symbol>
+  <symbol id="i-health" viewBox="0 0 24 24"><path d="M12 21s-8-4.6-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 6.4-8 11-8 11z"/><path d="M12 9v5M9.5 11.5h5"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9z"/></symbol>
+  <symbol id="i-team" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6"/></symbol>
+  <symbol id="i-scale" viewBox="0 0 24 24"><path d="M12 3v18M5 7h14M8 21h8M5 7l-3 6.5a3 3 0 0 0 6 0L5 7zM19 7l-3 6.5a3 3 0 0 0 6 0L19 7z"/></symbol>
+  <symbol id="i-truck" viewBox="0 0 24 24"><path d="M2 6h12v10H2zM14 10h4.5L22 13.5V16h-8"/><circle cx="6.5" cy="18" r="2"/><circle cx="17.5" cy="18" r="2"/></symbol>
+  <symbol id="i-code" viewBox="0 0 24 24"><path d="M8.5 8L4 12l4.5 4M15.5 8L20 12l-4.5 4M13.5 5l-3 14"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></symbol>
+</svg>
+
+<nav class="nav" aria-label="Main">
+  <div class="wrap">
+    <a class="brand" href="/" aria-label="Santo home"><img src="/static/img/logo.svg" alt="Santo" width="115" height="30"></a>
+    <ul>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#industries">Industries</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <div class="actions">
+      <a class="btn btn-ghost" href="/console">Open console</a>
+      <a class="btn btn-primary" href="/builder">Get started</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <span class="tag"><i></i>Your AI assistant, ready in minutes</span>
+      <h1 class="display">Meet Santo. Your customers get answers <span>24/7</span>.</h1>
+      <p class="lede">Santo learns your business from the documents you already have, then answers questions, takes bookings and captures leads on your website, even while you sleep.</p>
+      <div class="ctas">
+        <a class="btn btn-primary" href="/builder">Create your assistant</a>
+        <a class="btn btn-ghost" href="#demo-input">Chat with Santo</a>
+      </div>
+      <ul class="checks">
+        <li><svg class="ico"><use href="#i-check"/></svg>No coding needed</li>
+        <li><svg class="ico"><use href="#i-check"/></svg>No AI key needed</li>
+        <li><svg class="ico"><use href="#i-check"/></svg>Works on any website</li>
+      </ul>
+    </div>
+
+    <div class="stage">
+      <div class="float f1"><div class="ib"><svg class="ico"><use href="#i-cal"/></svg></div><div><b>New booking</b><span>Table for 4, Friday 7:00 pm</span></div></div>
+      <div class="float f2"><div class="ib"><svg class="ico"><use href="#i-lead"/></svg></div><div><b>New lead captured</b><span>Wants a quote for 3 rooms</span></div></div>
+      
+
+      <div class="phone" aria-label="Live chat demo">
+        <div class="screen">
+          <div class="app-bar"><div class="avatar"><img src="/static/img/mark.svg" alt=""></div><div><b id="d-name">Santo</b><small id="d-status">Online now</small></div></div>
+          <div class="agent-pick" role="tablist" id="d-tabs" aria-label="Try a demo assistant"></div>
+          <div class="log" id="d-log" aria-live="polite"></div>
+          <div class="chips" id="d-chips"></div>
+          <form class="composer" id="d-form">
+            <label for="demo-input" style="position:absolute;left:-9999px">Message</label>
+            <input id="demo-input" placeholder="Type your question…" autocomplete="off">
+            <button type="submit" aria-label="Send"><svg class="ico"><use href="#i-send"/></svg></button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="strip"><div class="wrap">
+  <span>Runs on open-source AI</span><span>Qwen</span><span>Llama</span><span>Mistral</span><span>No API key needed</span>
+</div></div>
+
+<!-- ================= FEATURES ================= -->
+<section class="section" id="features">
+  <div class="wrap">
+    <div class="sec-head center">
+      <h2 class="display">Everything a great front desk does, without the wait.</h2>
+      <p class="lede">Santo handles the questions you answer every day, so you and your team can focus on the work only people can do.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat"><div class="ico-box"><svg class="ico"><use href="#i-chat"/></svg></div><h3>Answers instantly</h3><p>Replies to customers in seconds, any time of day, in a friendly tone that matches your brand.</p></div>
+      <div class="feat"><div class="ico-box"><svg class="ico"><use href="#i-book"/></svg></div><h3>Knows your business</h3><p>Learns from your menu, price list, policies or FAQs. It answers from your information, not guesses.</p></div>
+      <div class="feat"><div class="ico-box"><svg class="ico"><use href="#i-cal"/></svg></div><h3>Takes bookings</h3><p>Collects the details for a table, appointment or viewing and sends them straight to your booking system.</p></div>
+      <div class="feat"><div class="ico-box"><svg class="ico"><use href="#i-lead"/></svg></div><h3>Captures leads</h3><p>Turns website visitors into contacts, with their name, details and what they need, ready for follow-up.</p></div>
+      <div class="feat"><div class="ico-box"><svg class="ico"><use href="#i-palette"/></svg></div><h3>Looks like you</h3><p>Your name, your colours, your greeting. Customers see your brand, not ours.</p></div>
+      <div class="feat"><div class="ico-box"><svg class="ico"><use href="#i-shield"/></svg></div><h3>Answers any question</h3><p>Business questions come from your information. General questions, math and facts get answered too, so no customer is left waiting.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= HOW IT WORKS ================= -->
+<section class="section how" id="how">
+  <div class="wrap">
+    <div class="sec-head center">
+      <h2 class="display">Live on your website in three simple steps.</h2>
+      <p class="lede">If you can fill in a form, you can set up Santo.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-text">
+          <span class="step-num">1</span>
+          <h3>Tell Santo about your business</h3>
+          <p>Pick your industry, add your business name and paste in what customers usually ask about.</p>
+          <ul><li><svg class="ico"><use href="#i-check"/></svg>Ready-made templates for 8 industries</li><li><svg class="ico"><use href="#i-check"/></svg>Upload your FAQ or menu files</li></ul>
+        </div>
+        <div class="browser"><div class="bar"><i></i><i></i><i></i><span>heysanto.ai/builder</span></div><img src="/static/img/screens/builder.webp" alt="The Santo builder with a restaurant template filled in and a test chat answering a gluten-free question" width="1600" height="1000" loading="lazy"></div>
+      </div>
+      <div class="step">
+        <div class="step-text">
+          <span class="step-num">2</span>
+          <h3>Try it before customers do</h3>
+          <p>Ask it anything and see exactly how it will answer. Change the wording until it sounds just right.</p>
+          <ul><li><svg class="ico"><use href="#i-check"/></svg>Test as many times as you like</li><li><svg class="ico"><use href="#i-check"/></svg>Update answers any time</li></ul>
+        </div>
+        <div class="browser"><div class="bar"><i></i><i></i><i></i><span>heysanto.ai/console</span></div><img src="/static/img/screens/console.webp" alt="The Santo console showing a conversation with the Santo assistant" width="1600" height="1000" loading="lazy"></div>
+      </div>
+      <div class="step">
+        <div class="step-text">
+          <span class="step-num">3</span>
+          <h3>Go live and watch it work</h3>
+          <p>Copy one line onto your website and Santo starts helping visitors. See every conversation and new lead on your dashboard.</p>
+          <ul><li><svg class="ico"><use href="#i-check"/></svg>Works with Shopify, WordPress, Wix and more</li><li><svg class="ico"><use href="#i-check"/></svg>Daily activity and lead list</li></ul>
+        </div>
+        <div class="browser"><div class="bar"><i></i><i></i><i></i><span>heysanto.ai/admin</span></div><img src="/static/img/screens/admin.webp" alt="The Santo dashboard with message totals, a 14-day chart, agents and recent conversations" width="1600" height="1000" loading="lazy"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= INDUSTRIES ================= -->
+<section class="section" id="industries">
+  <div class="wrap">
+    <div class="sec-head center">
+      <h2 class="display">Made for businesses like yours.</h2>
+      <p class="lede">Start from a template built for your industry, then make it your own.</p>
+    </div>
+    <div class="ind-grid">
+      <a class="ind" href="/for/restaurants"><div class="ib" style="background:#FEE2E2;color:#DC2626"><svg class="ico"><use href="#i-food"/></svg></div><h3>Restaurants and cafés</h3><p>Menus, opening hours, allergens and table bookings.</p><span class="go">See how it works</span></a>
+      <a class="ind" href="/for/online-stores"><div class="ib" style="background:#DCFCE7;color:#16A34A"><svg class="ico"><use href="#i-bag"/></svg></div><h3>Online stores</h3><p>Shipping, returns, sizing and order status questions.</p><span class="go">See how it works</span></a>
+      <a class="ind" href="/for/clinics"><div class="ib" style="background:#E0F2FE;color:#0284C7"><svg class="ico"><use href="#i-health"/></svg></div><h3>Clinics and dentists</h3><p>Services, insurance accepted and appointment requests.</p><span class="go">See how it works</span></a>
+      <a class="ind" href="/for/real-estate"><div class="ib" style="background:#FEF3C7;color:#D97706"><svg class="ico"><use href="#i-home"/></svg></div><h3>Real estate</h3><p>Listing questions, buyer details and viewing bookings.</p><span class="go">See how it works</span></a>
+      <a class="ind" href="/for/hr-helpdesk"><div class="ib" style="background:#EDE9FE;color:#7C3AED"><svg class="ico"><use href="#i-team"/></svg></div><h3>HR and IT helpdesks</h3><p>Leave, payroll, benefits and password questions from staff.</p><span class="go">See how it works</span></a>
+      <a class="ind" href="/for/law-firms"><div class="ib" style="background:#E0E7FF;color:#4338CA"><svg class="ico"><use href="#i-scale"/></svg></div><h3>Law firms</h3><p>Practice areas, fees, new client intake and consultations.</p><span class="go">See how it works</span></a>
+      <a class="ind" href="/for/logistics"><div class="ib" style="background:#CCFBF1;color:#0D9488"><svg class="ico"><use href="#i-truck"/></svg></div><h3>Logistics</h3><p>Shipment tracking, standard rates and damage claims.</p><span class="go">See how it works</span></a>
+      <a class="ind" href="/for/software"><div class="ib" style="background:#FCE7F3;color:#DB2777"><svg class="ico"><use href="#i-code"/></svg></div><h3>Software companies</h3><p>How-to help from your docs, account questions and bug reports.</p><span class="go">See how it works</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= BAND ================= -->
+<section class="section band" aria-label="Why Santo">
+  <div class="wrap">
+    <div class="stat"><b>24/7</b><span>Always on, nights, weekends and holidays included</span></div>
+    <div class="stat"><b>Seconds</b><span>to reply, instead of hours waiting for an email</span></div>
+    <div class="stat"><b>Minutes</b><span>to set up from your existing FAQs and documents</span></div>
+    <div class="stat"><b>0 code</b><span>Everything is done with simple forms</span></div>
+  </div>
+</section>
+
+<!-- ================= CHANNELS ================= -->
+<section class="section" id="channels">
+  <div class="wrap">
+    <div class="sec-head center">
+      <h2 class="display">One assistant, everywhere your customers are.</h2>
+      <p class="lede">Set Santo up once and use it on your website, in your own apps, and with other AI tools.</p>
+    </div>
+    <div class="ch-grid">
+      <div class="ch"><div class="ico-box"><svg class="ico"><use href="#i-globe"/></svg></div><h3>On your website</h3><p>A chat button in your brand colours appears on every page. Visitors click and get answers straight away.</p></div>
+      <div class="ch"><div class="ico-box"><svg class="ico"><use href="#i-plug"/></svg></div><h3>In your apps and tools</h3><p>Connect Santo to your mobile app, help desk or Zapier, and to booking or order systems.</p></div>
+      <div class="ch"><div class="ico-box"><svg class="ico"><use href="#i-bolt"/></svg></div><h3>With other AI assistants</h3><p>Tools like Claude can ask your Santo for answers, so your business information is always one question away.</p></div>
+    </div>
+    <p class="dev-note">For developers: a REST API and an MCP server come with every assistant. <a href="/docs">Read the API docs</a>.</p>
+  </div>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section class="section" id="faq">
+  <div class="wrap">
+    <div class="sec-head center"><h2 class="display">Frequently asked questions</h2></div>
+    <div class="faq-list">
+      <details><summary>Do I need any technical skills?</summary><p>No. You fill in a simple form, paste your information and copy one line onto your website. If you use Shopify, WordPress or Wix, it takes a couple of minutes.</p></details>
+      <details><summary>Can Santo answer any question?</summary><p>Yes. Santo answers questions about your business from your own information, and general questions too: facts, explanations, math, dates and everyday advice. It never makes up your prices or policies. If something about your business isn't covered, it offers to pass the customer's details to your team.</p></details>
+      <details><summary>Can it book appointments or tables?</summary><p>Yes. Santo collects the customer's details and sends them to your booking tool, calendar or email, so nothing gets missed.</p></details>
+      <details><summary>Can I change what it says later?</summary><p>Any time. Update your information or instructions and Santo uses the new version straight away.</p></details>
+      <details><summary>Do I need an OpenAI or other AI account?</summary><p>No. Santo comes with its own open-source AI model that runs on your server, so there are no API keys and no per-message charges.</p></details>
+      <details><summary>Is my information safe?</summary><p>Your data is kept separate from other businesses and you can delete conversations at any time. Because the AI runs on your own server, customer conversations are never sent to an outside AI company.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FINAL CTA ================= -->
+<section class="final" id="start">
+  <div class="wrap">
+    <div class="final-card">
+      <div>
+        <h2 class="display">Get your own Santo this week.</h2>
+        <p class="lede">Tell us about your business and we'll send you a working assistant built on your own information.</p>
+        <ul><li><svg class="ico"><use href="#i-check"/></svg>Built on your own information</li><li><svg class="ico"><use href="#i-check"/></svg>Works on any website</li><li><svg class="ico"><use href="#i-check"/></svg>No AI key needed</li></ul>
+      </div>
+      <form id="lead-form" novalidate>
+        <div class="field"><label for="l-name">Your name</label><input id="l-name" name="name" autocomplete="name"></div>
+        <div class="field"><label for="l-email">Work email</label><input id="l-email" name="email" type="email" required autocomplete="email"></div>
+        <div class="field"><label for="l-company">Business name</label><input id="l-company" name="company" autocomplete="organization"></div>
+        <div class="field"><label for="l-phone">Phone (optional)</label><input id="l-phone" name="phone" type="tel" autocomplete="tel"></div>
+        <div class="field full"><label for="l-msg">What should Santo help with?</label><textarea id="l-msg" name="message" rows="3" placeholder="For example: answer menu questions and take table bookings"></textarea></div>
+        <div class="full"><button class="btn btn-primary" type="submit">Request my assistant</button><p id="lead-status" role="status" style="margin:10px 0 0;text-align:center"></p></div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div><img src="/static/img/logo-light.svg" alt="Santo" width="107" height="28"><p style="max-width:34ch">The AI assistant that answers your customers 24/7, built from what your business already knows.</p></div>
+    <div><h3>Product</h3><ul><li><a href="#features">Features</a></li><li><a href="/builder">Create an assistant</a></li><li><a href="/admin">Dashboard</a></li></ul></div>
+    <div><h3>Developers</h3><ul><li><a href="/docs">API docs</a></li><li><a href="/console">Console</a></li><li><a href="/health">Status</a></li></ul></div>
+    <div><h3>Company</h3><ul><li><a href="#start">Contact us</a></li><li><a href="mailto:hello@heysanto.ai">hello@heysanto.ai</a></li></ul></div>
+    <p class="legal">© 2026 Santo. heysanto.ai</p>
+  </div>
+</footer>
+
+<script>
+/* ---------- live demo inside the phone ---------- */
+(function () {
+  const $ = id => document.getElementById(id);
+  const sessions = {}; let cur = null;
+  const LABEL = { santo: 'Santo', 'bella-bistro': 'Restaurant', 'acme-support': 'Online store' };
+  function add(cls, text) { const d = document.createElement('div'); d.className = 'bubble ' + cls; d.textContent = text; $('d-log').appendChild(d); $('d-log').scrollTop = 1e9; return d; }
+  function select(a) {
+    cur = a;
+    document.querySelectorAll('#d-tabs button').forEach(b => b.setAttribute('aria-selected', b.dataset.id === a.id));
+    $('d-name').textContent = a.id === 'santo' ? 'Santo' : a.business;
+    $('d-log').innerHTML = ''; add('bot', a.greeting); $('d-chips').innerHTML = '';
+    (a.suggested_questions || []).slice(0, 3).forEach(q => { const b = document.createElement('button'); b.type = 'button'; b.textContent = q; b.onclick = () => send(q); $('d-chips').appendChild(b); });
+  }
+  async function send(text) {
+    if (!text.trim() || !cur) return;
+    document.querySelector('.stage').classList.add('chatting');
+    add('me', text); $('demo-input').value = ''; $('d-chips').innerHTML = '';
+    const wait = add('bot', ''); wait.innerHTML = '<span class="typing"><i></i><i></i><i></i></span>';
+    try {
+      const r = await fetch(`/api/agents/${cur.id}/chat`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ message: text, session_id: sessions[cur.id] || null }) });
+      const j = await r.json(); if (!r.ok) throw new Error(j.detail || 'No answer right now.');
+      sessions[cur.id] = j.session_id; wait.textContent = j.reply;
+    } catch (e) { wait.textContent = e.message + ' Please try again.'; }
+  }
+  $('d-form').onsubmit = e => { e.preventDefault(); send($('demo-input').value); };
+  fetch('/api/agents').then(r => r.json()).then(list => {
+    const agents = Object.keys(LABEL).map(id => list.find(a => a.id === id)).filter(Boolean);
+    agents.forEach(a => { const b = document.createElement('button'); b.type = 'button'; b.role = 'tab'; b.dataset.id = a.id; b.textContent = LABEL[a.id]; b.onclick = () => select(a); $('d-tabs').appendChild(b); });
+    if (agents.length) select(agents[0]);
+  }).catch(() => add('bot', 'The demo is offline right now.'));
+})();
+
+/* ---------- lead form ---------- */
+(function () {
+  const f = document.getElementById('lead-form'), st = document.getElementById('lead-status');
+  f.onsubmit = async e => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(f)); data.source = 'homepage';
+    if (data.phone) data.message = `[phone: ${data.phone}] ` + (data.message || ''); delete data.phone;
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(data.email || '')) { st.className = 'error-text'; st.textContent = 'Enter your work email, like name@company.com.'; document.getElementById('l-email').focus(); return; }
+    const btn = f.querySelector('button'); btn.disabled = true; st.className = ''; st.textContent = 'Sending…';
+    try {
+      const r = await fetch('/api/leads', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(data) });
+      if (!r.ok) throw new Error((await r.json()).detail?.[0]?.msg || 'Request failed.');
+      f.reset(); st.className = 'ok-text'; st.textContent = 'Thanks! We\'ll be in touch soon.';
+    } catch (err) { st.className = 'error-text'; st.textContent = 'Not sent: ' + err.message; }
+    btn.disabled = false;
+  };
+})();
+</script>
+</body>
+</html>

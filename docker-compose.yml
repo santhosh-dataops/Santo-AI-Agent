@@ -1,0 +1,39 @@
+# Santo + its own open-source AI. No API key needed.
+#   docker compose up -d        (first start downloads the model, about 2 GB, once)
+services:
+  santo:
+    build: .
+    ports: ["8000:8000"]
+    env_file: .env
+    environment:
+      OLLAMA_URL: http://ollama:11434        # use the bundled AI model; no key
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen2.5:3b}
+      EMBED_MODEL: ${EMBED_MODEL:-nomic-embed-text}
+    volumes:
+      - ./agents:/app/agents
+      - ./knowledge:/app/knowledge
+      - ./data:/app/data
+    depends_on: [ollama]
+    restart: unless-stopped
+
+  ollama:                                     # runs open-source models locally (CPU or GPU)
+    image: ollama/ollama:latest
+    volumes: [ollama_models:/root/.ollama]
+    environment:
+      OLLAMA_KEEP_ALIVE: 24h                  # keep the model loaded for fast replies
+    restart: unless-stopped
+    # NVIDIA GPU? Uncomment for much faster answers:
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices: [{driver: nvidia, count: all, capabilities: [gpu]}]
+
+  ollama-pull:                                # one-time download of the chat + search models
+    image: ollama/ollama:latest
+    environment: { OLLAMA_HOST: "ollama:11434" }
+    entrypoint: ["/bin/sh", "-c", "sleep 5 && ollama pull ${OLLAMA_MODEL:-qwen2.5:3b} && ollama pull ${EMBED_MODEL:-nomic-embed-text}"]
+    depends_on: [ollama]
+    restart: "no"
+
+volumes:
+  ollama_models:

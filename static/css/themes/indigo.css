@@ -1,0 +1,10 @@
+/* Theme: Indigo Pro — clean, modern SaaS */
+:root {
+  --display: "Plus Jakarta Sans", system-ui, sans-serif;
+  --head-stretch: 100%; --head-weight: 800; --head-spacing: -.03em;
+  --undyed: #F7F8FC; --cotton: #FFFFFF; --ink: #0F172A; --muted: #475569; --line: #E2E8F0;
+  --vat: #4F46E5; --vat-soft: #818CF8; --saffron: #22D3EE; --woad: #10B981; --madder: #4F46E5;
+  --primary: #4F46E5; --primary-hover: #4338CA;
+  --dark: #1E1B4B; --dark-2: #151239; --dark-line: #3730A3; --on-dark-muted: #C7D2FE; --on-dark-code: #E0E7FF;
+  --t1: #818CF8; --t2: #22D3EE; --t3: #C084FC; --t4: #F472B6; --warp: #4338CA;
+}

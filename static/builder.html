@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Build an agent · Santo</title>
+<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/static/css/site.css">
+<style>
+  .builder { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 32px; align-items: start; padding-bottom: 80px; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+  .color-row { display: flex; gap: 8px; align-items: center; }
+  .color-row input[type=color] { width: 52px; height: 46px; padding: 4px; }
+  .swatch-pick { width: 30px; height: 30px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1.5px var(--line); cursor: pointer; }
+  .templates { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+  .templates button { border: 1.5px solid var(--line); background: #fff; border-radius: 99px; padding: 7px 14px; font: 600 var(--t-xs) var(--display); color: var(--ink); cursor: pointer; }
+  .templates button:hover, .templates button[aria-pressed="true"] { border-color: var(--ink); background: var(--ink); color: #fff; }
+  fieldset { border: 0; padding: 0; margin: 0 0 8px; }
+  legend { font: 750 var(--t-lg) var(--display); font-stretch: 118%; margin-bottom: 16px; padding: 0; }
+  .side { position: sticky; top: 88px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
+  .preview { border-radius: 14px; overflow: hidden; background: #fff; border: 1px solid var(--line); }
+  .preview .hd { padding: 14px 16px; color: #fff; background: var(--agent); }
+  .preview .hd b { display: block; font-stretch: 110%; } .preview .hd small { opacity: .85; }
+  .preview .log { padding: 14px; min-height: 220px; max-height: 340px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; background: var(--undyed); }
+  .preview .m { max-width: 88%; padding: 8px 12px; border-radius: 12px; font-size: var(--t-sm); white-space: pre-wrap; overflow-wrap: anywhere; }
+  .preview .b { background: #fff; align-self: flex-start; } .preview .u { background: var(--agent); color: #fff; align-self: flex-end; }
+  .preview input { min-width: 0; }
+  .preview form { display: flex; gap: 6px; padding: 10px; border-top: 1px solid var(--line); }
+  .preview form .btn { background: var(--agent); color: #fff; min-height: 42px; }
+  .preview .note { font-size: var(--t-xs); color: var(--muted); padding: 8px 14px 0; }
+  .result pre { background: var(--ink); color: #DCE1F5; padding: 12px; border-radius: var(--r-md); overflow-x: auto; font-size: var(--t-xs); margin: 6px 0 14px; }
+  .file-btn { font-size: var(--t-xs); }
+  @media (max-width: 960px) { .builder { grid-template-columns: minmax(0, 1fr); } .side { position: static; } .row2 { grid-template-columns: minmax(0, 1fr); } }
+</style>
+</head>
+<body>
+<nav class="nav" aria-label="Main"><div class="wrap">
+  <a class="brand" href="/"><img src="/static/img/logo.svg" alt="Santo" width="115" height="30"></a>
+  <ul><li><a href="/console">Console</a></li><li><a href="/admin">Dashboard</a></li><li><a href="/docs">API docs</a></li></ul>
+  <div class="actions"><a class="btn btn-ghost" href="/">Home</a></div>
+</div></nav>
+
+<main class="wrap">
+  <header class="app-head">
+    <h1 class="display">Build an agent</h1>
+    <p class="lede">Describe the job, paste what it should know, and publish. You can test it on the right before adding it to your site.</p>
+  </header>
+
+  <div class="keybar panel">
+    <div class="field"><label for="key">Admin key</label><input id="key" type="password" placeholder="One of the API_KEYS set on your server" autocomplete="off">
+      <div class="hint">Kept in this browser tab only. Needed to publish agents.</div></div>
+  </div>
+
+  <div class="builder">
+    <form id="bf" class="panel" novalidate>
+      <p class="small muted" style="margin-bottom:8px">Start from an example</p>
+      <div class="templates" id="templates"></div>
+
+      <fieldset><legend>Who it works for</legend>
+        <div class="row2">
+          <div class="field"><label for="name">Agent name</label><input id="name" name="name" required placeholder="Front desk"></div>
+          <div class="field"><label for="business">Business name</label><input id="business" name="business" placeholder="Sunrise Dental"></div>
+          <div class="field"><label for="id">Agent ID</label><input id="id" name="id" required placeholder="sunrise-dental"><div class="hint">Used in links and code. Lowercase letters, numbers and dashes.</div></div>
+          <div class="field"><label for="domain">Industry</label><input id="domain" name="domain" placeholder="dental clinic"></div>
+        </div>
+        <div class="field"><label for="description">One-line description</label><input id="description" name="description" placeholder="Answers questions about services, insurance and appointments."></div>
+      </fieldset>
+
+      <fieldset><legend>How it behaves</legend>
+        <div class="field"><label for="system_prompt">Instructions</label>
+          <textarea id="system_prompt" name="system_prompt" required rows="7" placeholder="You are the friendly front desk assistant for…&#10;- Always check the knowledge base before answering.&#10;- Hand off to a person when…"></textarea></div>
+        <div class="field"><label for="answer_mode">Questions it answers</label>
+          <select id="answer_mode" name="answer_mode"><option value="open">Everything: business and general questions</option><option value="business">Only questions about my business</option></select>
+          <div class="hint">Either way, prices, hours and policies come only from your own information.</div></div>
+        <div class="field"><label for="greeting">First message</label><input id="greeting" name="greeting" value="Hi! How can I help you today?"></div>
+        <div class="field"><label for="questions">Suggested questions</label><textarea id="questions" name="questions" rows="3" placeholder="One per line"></textarea></div>
+        <div class="field"><label>Brand colour</label>
+          <div class="color-row"><input type="color" id="theme_color" name="theme_color" value="#2E3F8F" aria-label="Brand colour"><span id="picks" class="color-row"></span></div></div>
+      </fieldset>
+
+      <fieldset><legend>What it knows</legend>
+        <div class="field"><label for="knowledge">Knowledge</label>
+          <textarea id="knowledge" name="knowledge_text" rows="10" placeholder="# Hours&#10;Mon-Fri 8am-5pm…&#10;&#10;# Insurance&#10;We accept…"></textarea>
+          <div class="hint">Paste FAQs, prices and policies. Start each topic with a line like "# Topic" so answers stay precise. <label class="file-btn" style="display:inline;color:var(--vat);cursor:pointer;text-decoration:underline">Add from .md or .txt files<input type="file" id="files" accept=".md,.txt,text/plain,text/markdown" multiple hidden></label></div></div>
+      </fieldset>
+
+      <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+        <button class="btn btn-primary" type="submit">Publish agent</button>
+        <label style="display:flex;gap:8px;align-items:center;font-weight:500;margin:0"><input type="checkbox" id="overwrite" style="width:auto"> Replace an existing agent with this ID</label>
+      </div>
+      <p id="status" role="status" style="margin-top:14px"></p>
+    </form>
+
+    <aside class="side">
+      <div class="preview" id="preview">
+        <div class="hd"><b id="pv-name">Your agent</b><small id="pv-biz">Your business</small></div>
+        <div class="log" id="pv-log"></div>
+        <p class="note" id="pv-note">Publish to start testing real answers.</p>
+        <form id="pv-form"><input id="pv-input" placeholder="Test a question…" disabled><button class="btn" disabled>Send</button></form>
+      </div>
+      <div class="panel result" id="result" hidden>
+        <h3 style="margin-bottom:8px">Published</h3>
+        <p class="small muted">Add it to any website:</p><pre id="r-embed"></pre>
+        <p class="small muted">Call it from your app:</p><pre id="r-api"></pre>
+        <p class="small muted">Other AI agents use the MCP tool:</p><pre id="r-mcp"></pre>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const TPL = {
+  retail: { name: 'Store support', business: 'Acme Outdoor Gear', domain: 'online store', color: '#24877C', desc: 'Answers shipping, returns and product questions.',
+    prompt: 'You are a friendly, concise support agent for an online store.\n- Check the knowledge base before stating any policy.\n- For order questions, ask for the order number.\n- Offer a human handoff for refunds outside policy.',
+    q: ['What is your return policy?', 'How long does shipping take?'], k: '# Shipping\nFree over $50, 3-5 business days.\n\n# Returns\n30 days, unused items, full refund.' },
+  restaurant: { name: 'Host', business: 'Bella Bistro', domain: 'restaurant', color: '#C83E4D', desc: 'Menu, hours, allergens and bookings.',
+    prompt: 'You are the warm host of a neighbourhood restaurant.\n- Use the knowledge base for menu, hours and allergens.\n- To book, collect name, party size, date, time and phone, then confirm.',
+    q: ['What are your hours?', 'Do you have vegan options?'], k: '# Hours\nTue-Sun 5pm-10pm. Closed Mondays.\n\n# Allergens\nGluten-free pasta available. Kitchen handles nuts.' },
+  clinic: { name: 'Front desk', business: 'Sunrise Dental', domain: 'dental clinic', color: '#6F82D6', desc: 'Services, insurance and appointment requests.',
+    prompt: 'You are the front desk assistant for a dental clinic.\n- Answer questions about services, insurance, hours and visit prep from the knowledge base.\n- Never give medical advice or diagnoses. For pain or emergencies, give the clinic phone number.\n- To request an appointment, collect name, phone and preferred times.',
+    q: ['Do you take Delta Dental?', 'How much is a cleaning?'], k: '# Hours\nMon-Thu 8am-5pm, Fri 8am-1pm.\n\n# Insurance\nIn network with Delta Dental, Cigna and MetLife.\n\n# Prices\nCleaning and exam without insurance: $140.' },
+  realty: { name: 'Listing concierge', business: 'Keystone Realty', domain: 'real estate', color: '#B9861E', desc: 'Listing questions, buyer qualification and viewings.',
+    prompt: 'You are a concierge for a real estate brokerage.\n- Answer questions about listings from the knowledge base.\n- Ask about budget, area and timeline before suggesting homes.\n- Offer to book a viewing with an agent.',
+    q: ['What homes do you have under $400k?', 'Can I book a viewing?'], k: '# 12 Oak Lane\n3 bed, 2 bath, $389,000. Open house Saturdays 1-3pm.' },
+  hr: { name: 'Helpdesk', business: 'Northwind Corp', domain: 'HR and IT', color: '#2E3F8F', desc: 'PTO, payroll, benefits and IT questions.',
+    prompt: 'You are an internal HR and IT assistant.\n- Answer only from the knowledge base and name the policy.\n- Direct personal or sensitive cases to the HR team.',
+    q: ['How many PTO days do I get?', 'How do I reset my password?'], k: '# PTO\n20 days a year, 5 roll over.\n\n# Password reset\nUse the self-service portal at id.northwind.example.' },
+  legal: { name: 'Intake assistant', business: 'Harper & Lane', domain: 'law firm', color: '#16204A', desc: 'Practice areas, fees and consultation booking.',
+    prompt: 'You are the intake assistant for a law firm.\n- Explain practice areas, fees and the consultation process from the knowledge base.\n- Never give legal advice; say an attorney will review the case.\n- Collect name, contact details and a short case summary.',
+    q: ['Do you handle tenant disputes?', 'How much is a consultation?'], k: '# Practice areas\nFamily law, landlord and tenant, small business.\n\n# Fees\nFirst 30-minute consultation: $75.' },
+  logistics: { name: 'Shipment desk', business: 'Tidewater Freight', domain: 'logistics', color: '#24877C', desc: 'Tracking, rates and claims.',
+    prompt: 'You are the customer desk for a freight company.\n- Track shipments when given a reference.\n- Quote standard rates from the knowledge base; custom quotes go to sales.\n- Open claims for damaged freight by collecting details and photos.',
+    q: ['Where is shipment TW-4471?', 'How do I file a damage claim?'], k: '# Claims\nFile within 9 months of delivery with photos and the bill of lading.' },
+  saas: { name: 'Product support', business: 'Ledgerly', domain: 'software', color: '#C83E4D', desc: 'How-to help, account status and bug reports.',
+    prompt: 'You are product support for a SaaS app.\n- Answer how-to questions from the docs in the knowledge base, with numbered steps.\n- For bugs, collect steps to reproduce and the browser used.',
+    q: ['How do I export invoices?', 'Can I add another user?'], k: '# Export invoices\nGo to Invoices, select the date range, choose Export, then CSV or PDF.' }
+};
+const LABELS = { retail: 'Online store', restaurant: 'Restaurant', clinic: 'Clinic', realty: 'Real estate', hr: 'HR and IT', legal: 'Law firm', logistics: 'Logistics', saas: 'Software' };
+const slug = s => s.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40);
+let idTouched = false, published = null, session = null;
+
+try { $('key').value = sessionStorage.getItem('santo_key') || ''; } catch (e) {}
+$('key').oninput = () => { try { sessionStorage.setItem('santo_key', $('key').value); } catch (e) {} };
+
+function fill(k) {
+  const t = TPL[k]; if (!t) return;
+  $('name').value = t.name; $('business').value = t.business; $('domain').value = t.domain; $('description').value = t.desc;
+  $('system_prompt').value = t.prompt; $('questions').value = t.q.join('\n'); $('knowledge').value = t.k; $('theme_color').value = t.color; $('answer_mode').value = 'open';
+  $('greeting').value = `Hi! I'm the ${t.name.toLowerCase()} for ${t.business}. How can I help?`;
+  if (!idTouched) $('id').value = slug(t.business);
+  document.querySelectorAll('#templates button').forEach(b => b.setAttribute('aria-pressed', b.dataset.k === k));
+  preview();
+}
+Object.keys(TPL).forEach(k => { const b = document.createElement('button'); b.type = 'button'; b.dataset.k = k; b.textContent = LABELS[k]; b.onclick = () => fill(k); $('templates').appendChild(b); });
+['#2E3F8F', '#C83E4D', '#24877C', '#E2A72E', '#16204A', '#7C3AED'].forEach(c => { const s = document.createElement('button'); s.type = 'button'; s.className = 'swatch-pick'; s.style.background = c; s.setAttribute('aria-label', 'Use colour ' + c); s.onclick = () => { $('theme_color').value = c; preview(); }; $('picks').appendChild(s); });
+
+function preview() {
+  $('preview').style.setProperty('--agent', $('theme_color').value);
+  $('pv-name').textContent = $('name').value || 'Your agent';
+  $('pv-biz').textContent = $('business').value || 'Your business';
+  if (!published) { $('pv-log').innerHTML = ''; addPv('b', $('greeting').value || 'Hi! How can I help you today?'); }
+}
+function addPv(cls, t) { const d = document.createElement('div'); d.className = 'm ' + cls; d.textContent = t; $('pv-log').appendChild(d); $('pv-log').scrollTop = 1e9; return d; }
+$('bf').addEventListener('input', e => { if (e.target.id === 'id') idTouched = true; if (e.target.id === 'business' && !idTouched) $('id').value = slug($('business').value); preview(); });
+
+$('files').onchange = async e => {
+  for (const f of e.target.files) { const txt = await f.text(); $('knowledge').value += ($('knowledge').value ? '\n\n' : '') + `# ${f.name.replace(/\.(md|txt)$/i, '')}\n` + txt; }
+  e.target.value = '';
+};
+
+$('bf').onsubmit = async e => {
+  e.preventDefault();
+  const st = $('status'), err = m => { st.className = 'error-text'; st.textContent = m; };
+  if (!$('key').value) { $('key').focus(); return err('Enter your admin key at the top of the page to publish.'); }
+  for (const f of ['name', 'id', 'system_prompt']) if (!$(f).value.trim()) { $(f).focus(); return err(`Fill in "${document.querySelector(`label[for=${f}]`).textContent}" to publish.`); }
+  const body = { id: $('id').value.trim(), name: $('name').value.trim(), business: $('business').value.trim(), domain: $('domain').value.trim() || 'general',
+    description: $('description').value.trim(), greeting: $('greeting').value.trim() || 'Hi! How can I help you today?', system_prompt: $('system_prompt').value,
+    theme_color: $('theme_color').value, answer_mode: $('answer_mode').value, suggested_questions: $('questions').value.split('\n').map(s => s.trim()).filter(Boolean).slice(0, 6),
+    knowledge_text: $('knowledge').value, overwrite: $('overwrite').checked };
+  const btn = e.submitter; btn.disabled = true; st.className = ''; st.textContent = 'Publishing…';
+  try {
+    const r = await fetch('/api/admin/agents', { method: 'POST', headers: { 'content-type': 'application/json', 'x-api-key': $('key').value }, body: JSON.stringify(body) });
+    const j = await r.json();
+    if (!r.ok) throw new Error(typeof j.detail === 'string' ? j.detail : (j.detail?.[0]?.msg || 'Publishing failed.'));
+    published = j.created; session = null;
+    st.className = 'ok-text'; st.textContent = `Published "${body.name}". Test it on the right.`;
+    const o = location.origin;
+    $('r-embed').textContent = `<script src="${o}/widget.js" data-agent="${published}"><\/script>`;
+    $('r-api').textContent = `POST ${o}${j.api}\n{"message": "Hello"}`;
+    $('r-mcp').textContent = `${o}/mcp  →  ${j.mcp_tool}`;
+    $('result').hidden = false; $('pv-input').disabled = false; $('pv-form').querySelector('button').disabled = false;
+    $('pv-note').textContent = 'Live. Ask it something from your knowledge.';
+    $('pv-log').innerHTML = ''; addPv('b', body.greeting);
+  } catch (ex) { err('Not published: ' + ex.message); }
+  btn.disabled = false;
+};
+
+$('pv-form').onsubmit = async e => {
+  e.preventDefault(); const t = $('pv-input').value.trim(); if (!t || !published) return;
+  addPv('u', t); $('pv-input').value = ''; const w = addPv('b', 'Looking that up…');
+  try {
+    const r = await fetch(`/api/agents/${published}/chat`, { method: 'POST', headers: { 'content-type': 'application/json', 'x-api-key': $('key').value }, body: JSON.stringify({ message: t, session_id: session }) });
+    const j = await r.json(); if (!r.ok) throw new Error(j.detail || 'No answer.');
+    session = j.session_id; w.textContent = j.reply;
+  } catch (ex) { w.textContent = ex.message; }
+};
+
+const tpl = new URLSearchParams(location.search).get('template');
+tpl && TPL[tpl] ? fill(tpl) : preview();
+</script>
+</body>
+</html>

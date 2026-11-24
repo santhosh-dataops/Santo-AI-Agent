@@ -1,0 +1,16 @@
+# fly launch --copy-config ; fly secrets set ANTHROPIC_API_KEY=... API_KEYS=...
+app = "santo"
+primary_region = "dfw"
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+[[http_service.checks]]
+  path = "/health"
+  interval = "30s"
+  timeout = "5s"
+[mounts]
+  source = "santo_data"
+  destination = "/app/data"

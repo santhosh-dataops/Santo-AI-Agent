@@ -1,0 +1,10 @@
+/* Theme: Emerald Trust — fresh, calm, professional */
+:root {
+  --display: "Plus Jakarta Sans", system-ui, sans-serif;
+  --head-stretch: 100%; --head-weight: 800; --head-spacing: -.03em;
+  --undyed: #F5FAF7; --cotton: #FFFFFF; --ink: #0B2A24; --muted: #4B635D; --line: #DCE8E2;
+  --vat: #047857; --vat-soft: #34D399; --saffron: #FBBF24; --woad: #059669; --madder: #059669;
+  --primary: #059669; --primary-hover: #047857;
+  --dark: #052E26; --dark-2: #03221C; --dark-line: #0E4D40; --on-dark-muted: #B7E4D4; --on-dark-code: #D9F5EA;
+  --t1: #34D399; --t2: #FBBF24; --t3: #60A5FA; --t4: #A7F3D0; --warp: #0E7A60;
+}

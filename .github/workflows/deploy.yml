@@ -1,0 +1,32 @@
+# Auto-deploy: every push to main updates your server (after tests pass).
+# One-time setup in GitHub: Settings > Secrets and variables > Actions > New repository secret
+#   SERVER_HOST     your server's IP address
+#   SERVER_USER     ubuntu (Oracle) or root (GoDaddy VPS)
+#   SERVER_SSH_KEY  the private SSH key you use to log in to the server
+name: Deploy
+on:
+  workflow_run:
+    workflows: [Tests]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  deploy:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check secrets are set
+        run: |
+          if [ -z "${{ secrets.SERVER_HOST }}" ]; then echo "Add SERVER_HOST, SERVER_USER and SERVER_SSH_KEY secrets to enable deploys."; exit 1; fi
+      - name: Update the server
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd ~/santo
+            git pull --ff-only
+            sudo docker compose up -d --build
+            sleep 8
+            curl -fsS localhost:8000/health

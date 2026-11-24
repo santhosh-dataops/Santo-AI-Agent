@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Console · Santo</title>
+<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/static/css/site.css">
+<style>
+  :root { --accent:#2E3F8F; --bg:#F2F3F6; --card:#fff; --text:#16204A; --muted:#545C7A; --line:#D5D9E4; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:15px/1.5 var(--display); background:var(--bg); color:var(--text); }
+  header { display:flex; align-items:center; gap:14px; padding:0 20px; height:60px; background:var(--card); border-bottom:1px solid var(--line); }
+  header img { height:26px; width:auto; }
+  header span { color:var(--muted); font-size:13px; border-left:1px solid var(--line); padding-left:14px; }
+  header nav { margin-left:auto; display:flex; gap:14px; font-size:14px; } header a { color:var(--accent); text-decoration:none; }
+  .shell { display:grid; grid-template-columns:280px 1fr; height:calc(100vh - 60px); }
+  aside { border-right:1px solid var(--line); background:var(--card); overflow:auto; padding:12px; }
+  .agent { padding:12px; border-radius:10px; cursor:pointer; border:1px solid transparent; margin-bottom:6px; }
+  .agent:hover { background:var(--bg); } .agent.active { border-color:var(--accent); background:#eef4ff; }
+  .agent b { display:block; font-stretch:110%; } .agent small { color:var(--muted); }
+  .tag { display:inline-block; font-size:11px; padding:1px 8px; border-radius:99px; background:var(--bg); color:var(--muted); margin-top:4px; }
+  main { display:flex; flex-direction:column; min-width:0; }
+  .tabs { display:flex; gap:4px; padding:10px 16px 0; background:var(--card); border-bottom:1px solid var(--line); }
+  .tabs button { border:0; background:none; padding:8px 14px; cursor:pointer; font:inherit; color:var(--muted); border-bottom:2px solid transparent; }
+  .tabs button.on { color:var(--text); border-color:var(--accent); }
+  #chat { flex:1; overflow:auto; padding:20px; display:flex; flex-direction:column; gap:10px; }
+  .msg { max-width:720px; padding:10px 14px; border-radius:14px; white-space:pre-wrap; word-wrap:break-word; }
+  .bot { background:var(--card); border:1px solid var(--line); align-self:flex-start; }
+  .me { background:var(--accent); color:#fff; align-self:flex-end; }
+  .tools { font-size:12px; color:var(--muted); align-self:flex-start; }
+  .chips { display:flex; flex-wrap:wrap; gap:8px; padding:0 20px 8px; }
+  .chips button { border:1px solid var(--line); background:var(--card); border-radius:99px; padding:6px 12px; cursor:pointer; font:inherit; font-size:13px; }
+  form { display:flex; gap:8px; padding:12px 16px; background:var(--card); border-top:1px solid var(--line); }
+  input { flex:1; padding:11px 14px; border:1px solid var(--line); border-radius:10px; font:inherit; }
+  form button { padding:0 18px; font-weight:650; border:0; border-radius:10px; background:var(--accent); color:#fff; font:inherit; cursor:pointer; }
+  #dev { display:none; flex:1; overflow:auto; padding:20px; }
+  pre { background:#0f172a; color:#e2e8f0; padding:14px; border-radius:10px; overflow:auto; font-size:13px; }
+  h3 { margin:18px 0 6px; }
+  @media (max-width:760px) {
+    .shell { grid-template-columns:1fr; grid-template-rows:auto 1fr; }
+    aside { display:flex; gap:6px; overflow-x:auto; border-right:0; border-bottom:1px solid var(--line); padding:8px; }
+    .agent { min-width:180px; margin:0; } header nav { display:none; }
+  }
+</style>
+</head>
+<body>
+<header><a href="/"><img src="/static/img/logo.svg" alt="Santo"></a><span>Console</span>
+  <nav><a href="/builder">Builder</a><a href="/admin">Dashboard</a><a href="/docs">API docs</a></nav></header>
+<div class="shell">
+  <aside id="agents"></aside>
+  <main>
+    <div class="tabs"><button class="on" data-t="chat">Chat</button><button data-t="dev">Integrate</button></div>
+    <div id="chat"></div>
+    <div class="chips" id="chips"></div>
+    <form id="f"><input id="q" placeholder="Type a message…" autocomplete="off"><button>Send</button></form>
+    <div id="dev"></div>
+  </main>
+</div>
+<script>
+const $ = s => document.querySelector(s);
+let agents = [], current = null, session = null;
+
+function add(cls, text) {
+  const d = document.createElement('div'); d.className = 'msg ' + cls; d.textContent = text;
+  $('#chat').appendChild(d); $('#chat').scrollTop = 1e9; return d;
+}
+
+function select(a) {
+  current = a; session = null;
+  document.documentElement.style.setProperty('--accent', a.theme_color || '#2E3F8F');
+  document.querySelectorAll('.agent').forEach(el => el.classList.toggle('active', el.dataset.id === a.id));
+  $('#chat').innerHTML = ''; add('bot', a.greeting);
+  const chips = $('#chips'); chips.innerHTML = '';
+  (a.suggested_questions || []).forEach(q => {
+    const b = document.createElement('button'); b.type = 'button'; b.textContent = q;
+    b.onclick = () => send(q); chips.appendChild(b);
+  });
+  renderDev();
+}
+
+async function send(text) {
+  if (!text.trim() || !current) return;
+  add('me', text); $('#q').value = ''; $('#chips').innerHTML = '';
+  const wait = add('bot', '…');
+  try {
+    const r = await fetch(`/api/agents/${current.id}/chat`, { method:'POST',
+      headers:{'content-type':'application/json'}, body: JSON.stringify({ message:text, session_id:session }) });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.detail || r.statusText);
+    session = j.session_id; wait.textContent = j.reply;
+    if (j.tool_calls && j.tool_calls.length) {
+      const t = document.createElement('div'); t.className = 'tools';
+      t.textContent = 'Used: ' + j.tool_calls.map(c => c.tool).join(', ') + ` · ${j.provider}/${j.model}`;
+      $('#chat').appendChild(t);
+    }
+  } catch (e) { wait.textContent = 'Error: ' + e.message; }
+}
+
+function renderDev() {
+  const o = location.origin, id = current.id, tool = 'ask_' + id.replace(/-/g, '_');
+  $('#dev').innerHTML = `
+  <h3>1. Embed on any website</h3><pre></pre>
+  <h3>2. REST API</h3><pre></pre>
+  <h3>3. Connect other AI agents (MCP)</h3>
+  <p>Add <code>${o}/mcp</code> as a remote MCP server in Claude, Cursor or any MCP client. It exposes a tool named <code>${tool}</code>.</p><pre></pre>`;
+  const pres = $('#dev').querySelectorAll('pre');
+  pres[0].textContent = `<script src="${o}/widget.js" data-agent="${id}"><\/script>`;
+  pres[1].textContent = `curl -X POST ${o}/api/agents/${id}/chat \\\n  -H "Content-Type: application/json" \\\n  -H "X-API-Key: YOUR_KEY" \\\n  -d '{"message": "Hello", "session_id": null}'`;
+  pres[2].textContent = `curl -X POST ${o}/mcp -H "Content-Type: application/json" -H "X-API-Key: YOUR_KEY" \\\n  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"${tool}","arguments":{"message":"Hello"}}}'`;
+}
+
+document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('.tabs button').forEach(x => x.classList.toggle('on', x === b));
+  const chat = b.dataset.t === 'chat';
+  $('#chat').style.display = $('#f').style.display = $('#chips').style.display = chat ? '' : 'none';
+  $('#dev').style.display = chat ? 'none' : 'block';
+});
+$('#f').onsubmit = e => { e.preventDefault(); send($('#q').value); };
+
+fetch('/api/agents').then(r => r.json()).then(list => {
+  agents = list; const box = $('#agents');
+  list.forEach(a => {
+    const d = document.createElement('div'); d.className = 'agent'; d.dataset.id = a.id;
+    d.innerHTML = '<b></b><small></small><div class="tag"></div>';
+    d.querySelector('b').textContent = a.name;
+    d.querySelector('small').textContent = a.business;
+    d.querySelector('.tag').textContent = a.domain;
+    d.onclick = () => select(a); box.appendChild(d);
+  });
+  const want = new URLSearchParams(location.search).get('agent');
+  if (list.length) select(list.find(a => a.id === want) || list[0]);
+});
+</script>
+</body>
+</html>

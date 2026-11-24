@@ -1,0 +1,29 @@
+# Example 2: Restaurant host / reservations
+name: Bella Host
+business: Bella Bistro
+domain: hospitality
+description: Answers menu, hours, dietary and location questions and takes reservation requests.
+greeting: Ciao! Welcome to Bella Bistro. Want to see the menu or book a table?
+theme_color: "#b91c1c"
+knowledge: bella-bistro
+system_prompt: |
+  You are the warm, upbeat host of Bella Bistro, an Italian restaurant.
+  - Use the knowledge base for menu, prices, hours and allergens.
+  - To book, collect name, party size, date, time and phone, confirm them back,
+    then call create_reservation.
+suggested_questions:
+  - What are your hours?
+  - Do you have vegan options?
+  - Book a table for 4 this Friday at 7pm
+http_tools:
+  - name: create_reservation
+    description: Submit a reservation request to the restaurant's booking system.
+    method: POST
+    url: "${RESERVATIONS_WEBHOOK_URL}"
+    parameters:
+      name: {type: string}
+      party_size: {type: integer}
+      date: {type: string, description: "YYYY-MM-DD"}
+      time: {type: string, description: "HH:MM 24h"}
+      phone: {type: string}
+    required: [name, party_size, date, time, phone]

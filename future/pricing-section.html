@@ -1,0 +1,52 @@
+<!-- Paste the <style> rules into index.html's <style>, and the section above the FAQ section.
+     Also add back: nav link <li><a href="#pricing">Pricing</a></li>, footer link, and the "offers" in the SoftwareApplication JSON-LD. -->
+<style>
+  /* ---------- pricing ---------- */
+  .pricing { background: #F8F9FF; }
+  .plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; align-items: stretch; }
+  .plan { position: relative; padding: 32px 28px; border-radius: 22px; background: #fff; border: 1px solid var(--line); display: flex; flex-direction: column; }
+  .plan.pop { border: 2px solid transparent; background: linear-gradient(#fff, #fff) padding-box, var(--grad) border-box; box-shadow: var(--shadow); transform: scale(1.03); }
+  .plan .badge { position: absolute; top: -13px; left: 28px; background: var(--grad); color: #fff; font-size: 12px; font-weight: 700; padding: 5px 12px; border-radius: 99px; }
+  .plan h3 { font-size: 1.15rem; font-stretch: 100%; }
+  .plan .for { color: var(--muted); font-size: var(--t-sm); margin: 4px 0 18px; }
+  .price { font-size: 2.6rem; font-weight: 800; letter-spacing: -.03em; line-height: 1; }
+  .price small { font-size: 1rem; font-weight: 500; color: var(--muted); letter-spacing: 0; }
+  .plan ul { list-style: none; padding: 0; margin: 24px 0 28px; display: grid; gap: 11px; font-size: var(--t-sm); }
+  .plan li { display: flex; gap: 10px; align-items: flex-start; }
+  .plan li .ico { width: 18px; height: 18px; color: #16A34A; stroke-width: 2.6; margin-top: 2px; }
+  .plan .btn { margin-top: auto; width: 100%; }
+  @media (max-width: 900px) { .plans { grid-template-columns: minmax(0, 1fr); } .plan.pop { transform: none; } }
+
+</style>
+
+<!-- ================= PRICING ================= -->
+<section class="section pricing" id="pricing">
+  <div class="wrap">
+    <div class="sec-head center">
+      <h2 class="display">Simple pricing that grows with you.</h2>
+      <p class="lede">Start free. Upgrade when Santo is busy helping your customers.</p>
+    </div>
+    <div class="plans">
+      <div class="plan">
+        <h3>Starter</h3><p class="for">Run Santo on your own server</p>
+        <div class="price">$0<small> forever</small></div>
+        <ul><li><svg class="ico"><use href="#i-check"/></svg>Unlimited assistants and messages</li><li><svg class="ico"><use href="#i-check"/></svg>Built-in open-source AI, no key needed</li><li><svg class="ico"><use href="#i-check"/></svg>Website chat, API and MCP</li><li><svg class="ico"><use href="#i-check"/></svg>Community support</li></ul>
+        <a class="btn btn-ghost" href="#start" data-plan="self-hosted">Get started</a>
+      </div>
+      <div class="plan pop">
+        <span class="badge">Most popular</span>
+        <h3>Business</h3><p class="for">We host everything for you</p>
+        <div class="price">$49<small> / month</small></div>
+        <ul><li><svg class="ico"><use href="#i-check"/></svg>3 assistants, 5,000 messages a month</li><li><svg class="ico"><use href="#i-check"/></svg>AI usage included</li><li><svg class="ico"><use href="#i-check"/></svg>Your own domain and branding</li><li><svg class="ico"><use href="#i-check"/></svg>Conversation history and leads</li><li><svg class="ico"><use href="#i-check"/></svg>Email support</li></ul>
+        <a class="btn btn-primary" href="#start" data-plan="studio">Start 14-day free trial</a>
+      </div>
+      <div class="plan">
+        <h3>Agency</h3><p class="for">For agencies and growing teams</p>
+        <div class="price">$299<small> / month</small></div>
+        <ul><li><svg class="ico"><use href="#i-check"/></svg>Unlimited assistants, 50,000 messages</li><li><svg class="ico"><use href="#i-check"/></svg>White-label for your clients</li><li><svg class="ico"><use href="#i-check"/></svg>Team sign-in and audit logs</li><li><svg class="ico"><use href="#i-check"/></svg>Priority support and setup help</li></ul>
+        <a class="btn btn-ghost" href="#start" data-plan="mill">Contact sales</a>
+      </div>
+    </div>
+  </div>
+</section>
+
