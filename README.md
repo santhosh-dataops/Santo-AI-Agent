@@ -127,6 +127,16 @@ echo 'heysanto.ai, www.heysanto.ai {
 ```
 Open ports 80 and 443 in the server's firewall (on Oracle Cloud, also open them in the VCN security list).
 
+### Deploy on GoDaddy Web Hosting (cPanel)
+Shared hosting can't run Docker or an AI model, so Santo runs with its **built-in engine** here. It answers from your documents, looks up general facts, does math, and captures bookings and leads, all with no API key. For full AI conversation, use a GoDaddy VPS with Docker instead.
+
+1. Buy a GoDaddy **Web Hosting (cPanel)** plan and attach your domain.
+2. cPanel > **Git Version Control** > Create: clone `https://github.com/santhosh-dataops/santo.git` into `santo` (or upload the zip with File Manager and extract it into `/home/<user>/santo`).
+3. cPanel > **Setup Python App** > Create Application: Python **3.10 or newer**, Application root `santo`, Application URL your domain (`/`), Startup file `passenger_wsgi.py`, Entry point `application`.
+4. In the same screen add environment variables `API_KEYS` (your admin password), `SITE_URL=https://heysanto.ai` and `CORS_ORIGINS=https://heysanto.ai`, then click **Run Pip Install** with `requirements.txt`, then **Restart**.
+5. cPanel > **SSL/TLS Status** > Run AutoSSL so the site gets HTTPS.
+6. To update later: Git Version Control > Manage > **Update from Remote**, then Setup Python App > Restart.
+
 ### Deploy with GitHub (recommended)
 1. Create a **private** repository named `santo` on github.com (no README or .gitignore, since the project already has them).
 2. On your computer, inside the `santo` folder:
